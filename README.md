@@ -1,2 +1,2 @@
-# sgf-ellite
-Sistema de Gestão Financeira - Ellite Imóveis
+# sgf
+Sistema de Gestão Financeira
