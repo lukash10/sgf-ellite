@@ -14,3 +14,11 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+html, body {
+    height: 100vh !important;
+}
+
+</style>

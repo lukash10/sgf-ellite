@@ -32,9 +32,84 @@ const generateModels = (model, dataTypes) => {
       defaultValue: "COLAB",
     }
   });
-  
 
-  return { User };
+  const Clients = model.define('clients', {
+    id: {
+      type: dataTypes.UUID,
+      defaultValue: dataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    nome: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    cpf: {
+      type: dataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    telefone: {
+      type: dataTypes.STRING,
+      allowNull: true,
+    },
+    celular: {
+      type: dataTypes.STRING,
+      allowNull: true,
+    },
+    clienteFornecedor: {
+      type: dataTypes.STRING,
+      allowNull: true,
+    },
+    email: {
+      type: dataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+  });
+
+  const Contas = model.define('contas', {
+    descricao: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    tipoConta: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    tipoDespesa: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+  });
+
+  const ContaReceber = model.define('contasreceber', {
+    descricao: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    nomeCliente: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    tipoCliente: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    dataVencimento: {
+      type: dataTypes.DATE,
+      allowNull: false,
+    },
+    statusRecebimento: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    valorTotal: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+  });
+ 
+  return { User, Clients, Contas, ContaReceber };
 };
 
 module.exports = generateModels(db, sequelize);
