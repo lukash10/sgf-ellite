@@ -104,7 +104,7 @@ const generateModels = (model, dataTypes) => {
       allowNull: false,
     },
     valorTotal: {
-      type: dataTypes.STRING,
+      type: dataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
   });

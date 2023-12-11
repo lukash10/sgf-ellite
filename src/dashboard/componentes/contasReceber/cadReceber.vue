@@ -149,6 +149,15 @@ export default {
             console.log(clienteSelecionado);
             this.form.tipoCliente = clienteSelecionado.tipo;
 
+            // Remoção do prefixo 'R$ ' e dos separadores de milhares (ponto) da string
+            const valorLimpo = this.form.valorTotal.replace(/^R\$ |(\.)+/g, '');
+
+            // Substituição da vírgula (separador decimal) por ponto
+            const valorNumerico = parseFloat(valorLimpo.replace(',', '.'));
+
+            // Atualiza o valor no formulário para o número limpo
+            this.form.valorTotal = valorNumerico;
+
             const response = await axios.post('api/contasreceber', this.form);
 
             console.log(response);
