@@ -17,6 +17,9 @@ import ListContas from './dashboard/componentes/conta/listContas.vue'
 import CadReceber from './dashboard/componentes/contasReceber/cadReceber.vue'
 import ListReceber from './dashboard/componentes/contasReceber/listReceber.vue'
 
+import CadPagar from './dashboard/componentes/contasPagar/cadPagar.vue'
+import ListPagar from './dashboard/componentes/contasPagar/listPagar.vue'
+
 import VueRouter from 'vue-router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -46,6 +49,9 @@ const routes = [
 
   { path: '/cadReceber', component: CadReceber, name: 'CadReceber' },
   { path: '/listReceber', component: ListReceber, name: 'ListReceber' },
+
+  { path: '/cadPagar', component: CadPagar, name: 'CadPagar' },
+  { path: '/listPagar', component: ListPagar, name: 'ListPagar' },
 
 
 ]

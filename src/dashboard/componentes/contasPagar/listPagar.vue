@@ -6,7 +6,7 @@
     
 <main id="content" class="m-2 p-3" style="display: flex;align-items: center;flex-direction: column;">
     
-  <h3 class="text-center mb-4">Listagem de Contas a Receber</h3>
+  <h3 class="text-center mb-4">Listagem de Contas a Pagar</h3>
     
   <table class="table">
 
@@ -15,9 +15,10 @@
         <th scope="col">#</th>
         <th scope="col">Nome</th>
         <th scope="col">Descrição</th>
+        <th scope="col">Emissão Pagamento</th>
         <th scope="col">Data Vencimento</th>
         <th scope="col">Status Recebimento</th>
-        <th scope="col">Tipo Cliente</th>
+        
         <th scope="col">Valor Total</th>
         <th scope="col">Editar</th>
       </tr>
@@ -28,9 +29,9 @@
           <th scope="row">{{ index + 1 }}</th>
           <td>{{ conta.clientes.nome }}</td>
           <td>{{ conta.descricao }}</td>
+          <td>{{ formatarData(conta.emissaoPagamento) }}</td>
           <td>{{ formatarData(conta.dataVencimento) }}</td>
-          <td :class="{'bg-danger': conta.statusRecebimento === 'Pendente', 'bg-success': conta.statusRecebimento === 'Recebido' }">{{ conta.statusRecebimento }}</td>
-          <td>{{ conta.tipoCliente }}</td>
+          <td :class="{'bg-danger': conta.statusPagamento === 'Pendente', 'bg-success': conta.statusPagamento === 'Pago' }">{{ conta.statusPagamento }}</td>
           <td>R$ {{ conta.valorTotal }}</td>
           <td>
             <button @click="editarContaReceber(conta.id)" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> </button>
@@ -65,11 +66,11 @@ export default {
   },
   methods: {
     async editarContaReceber(contaRec) {
-      this.$router.push(`/cadReceber?id=${contaRec}`);
+      this.$router.push(`/cadPagar?id=${contaRec}`);
     },
     async fetchClients() {
       try {
-        const response = await axios.get('/api/contasreceber');
+        const response = await axios.get('/api/contaspagar');
         this.contas = response.data;
         console.log('Contas recebidos:', response);
       } catch (error) {

@@ -5,6 +5,7 @@ module.exports = () => {
   const clientController = require("../controllers/client.controller.js");
   const contaController = require('../controllers/conta.controller.js');
   const contaReceberController = require('../controllers/receber.controller.js');
+  const contaPagarController = require('../controllers/pagar.controller.js');
 
   const router = require('express').Router();
 
@@ -33,10 +34,18 @@ module.exports = () => {
   
 
   router.get('/contasreceber', contaReceberController.findAllContasReceber);
+  router.get('/contasrecebergrafico', contaReceberController.findAllContasReceberByMonthBySum);
   router.get('/contasreceber/:id', contaReceberController.findContaReceberById);
   router.post('/contasreceber', contaReceberController.createContaReceber);
   router.put('/contasreceber/:id', contaReceberController.updateContaReceber);
   router.delete('/contasreceber/:id', contaReceberController.deleteContaReceber);
+
+  router.get('/contaspagar', contaPagarController.findAllContasPagar);
+  router.get('/contaspagargrafico', contaPagarController.findAllContasPagarByMonthBySum);
+  router.get('/contaspagar/:id', contaPagarController.findContaPagarById);
+  router.post('/contaspagar', contaPagarController.createContaPagar);
+  router.put('/contaspagar/:id', contaPagarController.updateContaPagar);
+  router.delete('/contaspagar/:id', contaPagarController.deleteContaPagar);
 
   return router;
 };

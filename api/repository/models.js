@@ -87,10 +87,6 @@ const generateModels = (model, dataTypes) => {
       type: dataTypes.STRING,
       allowNull: false,
     },
-    nomeCliente: {
-      type: dataTypes.STRING,
-      allowNull: false,
-    },
     tipoCliente: {
       type: dataTypes.STRING,
       allowNull: false,
@@ -108,8 +104,51 @@ const generateModels = (model, dataTypes) => {
       allowNull: false,
     },
   });
+
+  const ContaPagar = model.define('contaspagar', {
+    descricao: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    emissaoPagamento: {
+      type: dataTypes.DATE,
+      allowNull: false,
+    },
+    dataVencimento: {
+      type: dataTypes.DATE,
+      allowNull: false,
+    },
+    statusPagamento: {
+      type: dataTypes.STRING,
+      allowNull: false,
+    },
+    valorTotal: {
+      type: dataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+  });
+
+  Clients.hasMany(ContaReceber, {
+    foreignKey: 'ClientId',
+    as: 'contasreceber',
+  });
+
+  ContaReceber.belongsTo(Clients, { 
+    foreignKey: 'ClientId', 
+    as: 'clientes' }
+  );
+
+  Clients.hasMany(ContaPagar, {
+    foreignKey: 'ClientId',
+    as: 'contaspagar',
+  });
+
+  ContaPagar.belongsTo(Clients, { 
+    foreignKey: 'ClientId', 
+    as: 'clientes' }
+  );
  
-  return { User, Clients, Contas, ContaReceber };
+  return { User, Clients, Contas, ContaReceber, ContaPagar };
 };
 
 module.exports = generateModels(db, sequelize);

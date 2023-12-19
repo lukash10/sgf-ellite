@@ -6,7 +6,11 @@ const db = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT
+    dialect: process.env.DB_DIALECT,
+    // timezone: '-03:00', // Ajuste o fuso horário conforme necessário
+    // dialectOptions: {
+    //   useUTC: false // Configure conforme necessário
+    // }
   }
 );
 

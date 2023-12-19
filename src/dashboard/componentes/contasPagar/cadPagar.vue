@@ -8,7 +8,7 @@
     
    
     <form @submit="onSubmit" class="w-100 shadow-sm" style="border:1px solid rgb(206, 206, 206); border-radius:5px;padding: 30px">
-        <h3 class="text-center mb-4">Cadastro de Contas a Receber</h3>
+        <h3 class="text-center mb-4">Cadastro de Contas a Pagar</h3>
         <div class="container-fluid">
 
             <div class="row">
@@ -20,32 +20,37 @@
                      </div>
                 </div>
 
-                <div class="col-8">
+                <div class="col-12">
                     <label class="typo__label"><b>Selecione um Cliente/Fornecedor</b></label>
                     <multiselect v-model="form.clienteSelected" :options="clientOptions" placeholder="Selecione um cliente" label="nome"></multiselect>
-                    <pre> {{ form.clienteSelected }}</pre>
+                    <!-- <pre> {{ form.clienteSelected }}</pre> -->
+                </div>
+
+                <div class="col-6 mt-3">
+                    <div class="form-floating mb-3">
+                        <input v-model="form.emissaoPagamento" type="text" v-mask="'##/##/####'" class="form-control" id="floatingDataVenc" placeholder="Data Vencimento">
+                        <label for="floatingDataVenc"><i class="fa-solid fa-calendar"></i> Data Emissão</label>
+                    </div>
                 </div>
 
                 <div class="col-6 mt-3">
                     <div class="form-floating mb-3">
                         <input v-model="form.dataVencimento" type="text" v-mask="'##/##/####'" class="form-control" id="floatingDataVenc" placeholder="Data Vencimento">
-                        <label for="floatingDataVenc"><i class="fa-solid fa-signature"></i> Data Vencimento</label>
+                        <label for="floatingDataVenc"><i class="fa-solid fa-calendar"></i> Data Vencimento</label>
                     </div>
                 </div>
 
-                <div class="col-6 mt-3">
+                <div class="col-6 mt-3 mb-2">
                     <div class="form-floating mb-3">
                     <input v-model="form.valorTotal" type="text" v-money="money" class="form-control" id="floatingValorTotal" placeholder="Valor Total"/>
                     <label for="floatingValorTotal"><i class="fa-solid fa-signature"></i> Valor Total R$</label>
                     </div>
                 </div>
 
-                <hr>
-
-                <div class="col-12 mt-2">
+                <div class="col-6 mt-3 mb-3" style="border-radius:10px;border: 1px solid rgb(207, 207, 207);">
                     <b><b-form-group label="Status do Recebimento"></b-form-group></b>
                     <b-form-radio-group  
-                        v-model="form.statusRecebimento"
+                        v-model="form.statusPagamento"
                         :options="optionsRecebimento"
                         class="mb-3 "
                         value-field="item"
@@ -53,6 +58,9 @@
                         disabled-field="notEnabled"
                     ></b-form-radio-group>
                 </div>
+                
+                <hr>
+
 
 
                 
@@ -97,15 +105,15 @@ export default {
         clientOptions: [],
         optionsRecebimento: [
             { item: 'Pendente', name: 'Pendente' },
-            { item: 'Recebido', name: 'Recebido' },
+            { item: 'Pago', name: 'Pago' },
         ],
         form: {
             descricao: '',
             idCliente: null,
             clienteSelected: null,
-            tipoCliente: '',
+            emissaoPagamento: '',
             dataVencimento: '',
-            statusRecebimento: '',
+            statusPagamento: '',
             valorTotal: 0
         },
         money: {
@@ -133,7 +141,7 @@ export default {
 
       this.mode = 'EDIT';
 
-      const r = await axios.get(`/api/contasreceber/${idContaReceber}`, this.form);
+      const r = await axios.get(`/api/contaspagar/${idContaReceber}`, this.form);
 
       const dados = r.data;
 
@@ -151,12 +159,13 @@ export default {
 
       this.form.descricao = dados.descricao;
       this.form.clienteSelected = clienteEncontrado;
-      this.form.tipoCliente = dados.tipoCliente;
-
+      
       const dataCompletaFormatada = moment(dados.dataVencimento, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
+      const dataCompletaFormatadaa = moment(dados.emissaoPagamento, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
 
       this.form.dataVencimento = dataCompletaFormatada;
-      this.form.statusRecebimento = dados.statusRecebimento;
+      this.form.emissaoPagamento = dataCompletaFormatadaa;
+      this.form.statusPagamento = dados.statusPagamento;
       this.form.valorTotal = dados.valorTotal;
 
 
@@ -189,19 +198,21 @@ export default {
                       
             
             const dataCompletaFormatada = moment(this.form.dataVencimento, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
+            const dataCompletaFormatadaa = moment(this.form.emissaoPagamento, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
             this.form.dataVencimento = dataCompletaFormatada;
+            this.form.emissaoPagamento = dataCompletaFormatadaa;
+
             this.form.idCliente = this.form.clienteSelected.id;
-            this.form.tipoCliente = this.form.clienteSelected.tipo;
             this.form.clienteSelected = this.form.clienteSelected.nome
 
             const valorLimpo = this.form.valorTotal.replace(/^R\$ |(\.)+/g, '');
             const valorNumerico = parseFloat(valorLimpo.replace(',', '.'));
             this.form.valorTotal = valorNumerico;
 
-            const response = await axios.post('api/contasreceber', this.form);
+            const response = await axios.post('api/contaspagar', this.form);
 
             alert("Dados salvos com sucesso.");
-            this.$router.push('/listReceber');
+            this.$router.push('/listPagar');
             
           } else {
             event.preventDefault();
@@ -209,19 +220,21 @@ export default {
             const idContaReceber = this.$route.query.id;
 
             const dataCompletaFormatada = moment(this.form.dataVencimento, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
+            const dataCompletaFormatadaa = moment(this.form.emissaoPagamento, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
             this.form.dataVencimento = dataCompletaFormatada;
+            this.form.emissaoPagamento = dataCompletaFormatadaa;
+
             this.form.idCliente = this.form.clienteSelected.id;
-            this.form.tipoCliente = this.form.clienteSelected.tipo;
             this.form.clienteSelected = this.form.clienteSelected.nome;
 
             const valorLimpo = this.form.valorTotal.replace(/^R\$ |(\.)+/g, '');
             const valorNumerico = parseFloat(valorLimpo.replace(',', '.'));
             this.form.valorTotal = valorNumerico;
 
-            const response = await axios.put(`api/contasreceber/${idContaReceber}`, this.form);
+            const response = await axios.put(`api/contaspagar/${idContaReceber}`, this.form);
 
             alert("Dados salvos com sucesso.");
-            this.$router.push('/listReceber');
+            this.$router.push('/listPagar');
 
           }
             

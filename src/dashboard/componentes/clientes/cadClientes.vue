@@ -139,6 +139,8 @@ export default {
             console.log(response);
             //event.preventDefault();
             alert("Dados salvos com sucesso.");
+            this.$router.push('/listClientes');
+
         } catch (error) {
             console.error(error);
         }

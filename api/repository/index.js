@@ -1,4 +1,4 @@
-const { User, Clients, Contas , ContaReceber} = require('./models.js');
+const { User, Clients, Contas , ContaReceber, ContaPagar} = require('./models.js');
 const { Op } = require('sequelize');
 const sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
@@ -242,18 +242,48 @@ module.exports = {
     }
   },
 
-  // Contas a Receber
+  //ContaReceber
 
-  createContaReceber: async (contaReceberData) => {
+  createContaReceber: async (createContaRequest) => {
+    const {
+      idCliente,
+      descricao,
+      nomeCliente,
+      tipoCliente,
+      dataVencimento,
+      statusRecebimento,
+      valorTotal
+    } = createContaRequest;
+
     try {
-      const result = await ContaReceber.create(contaReceberData);
-      return result;
+      console.log("idCliente", idCliente);
+      console.log("createContaRequest", createContaRequest);
+
+      const cliente = await Clients.findOne({ where: { id: idCliente } });
+      //const cliente = await Clients.findClientById(idCliente);
+
+      if (!cliente) {
+        throw new Error('Cliente não encontrado');
+      }
+
+      // Criar a nova conta a receber associada ao cliente
+      const novaConta = await ContaReceber.create({
+        nomeCliente: nomeCliente,
+        descricao: descricao,
+        tipoCliente: tipoCliente,
+        dataVencimento: dataVencimento,
+        statusRecebimento: statusRecebimento,
+        valorTotal: valorTotal,
+        ClientId: idCliente // Definir o relacionamento com o cliente
+      });
+
+      return novaConta;
+
     } catch (error) {
-      console.log(error);
-      throw new Error('Erro ao criar conta a receber');
+      console.error('Erro ao criar a conta a receber:', error);
+      throw new Error('Erro ao criar a conta a receber');
     }
-  },
-  
+  },  
   updateContaReceber: async (id, contaReceberData) => {
     try {
       const contaReceberToUpdate = await ContaReceber.findOne({ where: { id: id } });
@@ -283,12 +313,14 @@ module.exports = {
   
   findAllContasReceber: async () => {
     try {
+
       const contasReceber = await ContaReceber.findAll({
         order: [['descricao', 'ASC']],
-        // Coloque aqui os atributos que deseja retornar, excluindo dados sensíveis se necessário
+        include: [{ model: Clients, as: 'clientes', attributes: ['nome']}]
       });
   
       return contasReceber;
+
     } catch (error) {
       console.log(error);
       throw new Error('Erro ao buscar contas a receber');
@@ -307,6 +339,106 @@ module.exports = {
       }
   
       return contaReceber;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Erro ao buscar conta a receber por ID');
+    }
+  },
+  
+
+  // Conta Pagar
+
+  createContaPagar: async (createContaRequest) => {
+    const {
+      idCliente,
+      descricao,
+      nomeCliente,
+      emissaoPagamento,
+      dataVencimento,
+      statusPagamento,
+      valorTotal
+    } = createContaRequest;
+
+    try {
+     
+      const cliente = await Clients.findOne({ where: { id: idCliente } });
+      
+      if (!cliente) {
+        throw new Error('Cliente não encontrado');
+      }
+
+      const novaConta = await ContaPagar.create({
+        nomeCliente: nomeCliente,
+        descricao: descricao,
+        emissaoPagamento: emissaoPagamento,
+        dataVencimento: dataVencimento,
+        statusPagamento: statusPagamento,
+        valorTotal: valorTotal,
+        ClientId: idCliente // Definir o relacionamento com o cliente
+      });
+
+      return novaConta;
+
+    } catch (error) {
+      console.error('Erro ao criar a conta a receber:', error);
+      throw new Error('Erro ao criar a conta a receber');
+    }
+  },  
+  updateContaPagar: async (id, contaPagarData) => {
+    try {
+      const contaPagarToUpdate = await ContaPagar.findOne({ where: { id: id } });
+  
+      if (!contaPagarToUpdate) {
+        throw new Error('Conta a pagar não encontrada');
+      }
+  
+      await contaPagarToUpdate.update(contaPagarData);
+  
+      return contaPagarToUpdate;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Erro ao atualizar conta a pagar');
+    }
+  },
+  
+  deleteContaPagar: async (id) => {
+    try {
+      const code = await ContaPagar.destroy({ where: { id: id } });
+      return code;
+    } catch (error) {
+      console.log(`Erro ao deletar a conta a pagar ${id}`, error);
+      throw new Error('Erro ao deletar conta a pagar');
+    }
+  },
+  
+  findAllContasPagar: async () => {
+    try {
+
+      const contasPagar = await ContaPagar.findAll({
+        order: [['descricao', 'ASC']],
+        include: [{ model: Clients, as: 'clientes', attributes: ['nome']}]
+      });
+  
+      return contasPagar;
+
+    } catch (error) {
+      console.log(error);
+      throw new Error('Erro ao buscar contas a pagar');
+    }
+  },
+  
+  findContaPagarById: async (id) => {
+    try {
+      const contaPagar = await ContaPagar.findOne({
+        where: { id: id },
+        // Coloque aqui os atributos que deseja retornar, excluindo dados sensíveis se necessário
+      });
+  
+      if (!contaPagar) {
+        throw new Error('Conta a pagar não encontrada');
+      }
+  
+      return contaPagar;
     } catch (error) {
       console.log(error);
       throw new Error('Erro ao buscar conta a receber por ID');
