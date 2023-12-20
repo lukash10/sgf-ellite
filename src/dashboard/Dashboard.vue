@@ -11,33 +11,37 @@
     <div class="container-fluid mb-3" style="border: 1px solid rgba(173, 173, 173, 0.329); padding: 10px; border-radius: 10px;">
 
       <div class="row">
+
         <div class="col">
           <div class="card text-white bg-primary mb-3 w-100">
             <div class="card-header">Clientes Cadastrados</div>
             <div class="card-body">
-              <h5 class="card-title">Img</h5>
-              <p class="card-text">100.</p>
+              <h5 class="card-title"><i class="fa fa-user" aria-hidden="true"></i></h5>
+              <p class="card-text">{{ clients }}</p>
             </div>
           </div>
         </div>
+
         <div class="col">
           <div class="card text-white bg-danger mb-3 w-100">
             <div class="card-header">Contas a Pagar</div>
             <div class="card-body">
-              <h5 class="card-title">Mês Atual: R$ </h5>
-              <p class="card-text">Total: R$</p>
+              <h5 class="card-title">Mês Atual: R$ {{ somaPagarMes }} </h5>
+              <p class="card-text">Total: R$ {{ contasPagar }}</p>
             </div>
           </div>
         </div>
+
         <div class="col">
           <div class="card text-white bg-success mb-3 w-100">
             <div class="card-header">Contas a Receber</div>
             <div class="card-body">
-              <h5 class="card-title">Mês Atual: R$ </h5>
-              <p class="card-text">Total: R$</p>
+              <h5 class="card-title">Mês Atual: R$ {{ somaReceberMes }} </h5>
+              <p class="card-text">Total: R$ {{ contasReceber }}</p>
             </div>
           </div>
         </div>
+
       </div>
     </div>
     
@@ -62,7 +66,6 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 import Sidebar from "../dashboard/Menu.vue";
 import axios from 'axios';
-import moment from 'moment';
 
 export default {
   data() {
@@ -86,7 +89,13 @@ export default {
       chartOptions: {
         responsive: true,
       },
-      contas:[]
+      contas:[],
+      contas2:[],
+      contasPagar: '',
+      contasReceber: '',
+      somaPagarMes: '',
+      somaReceberMes: '',
+      clients: '',
     }
   },
   components: {
@@ -98,19 +107,54 @@ export default {
     this.loaded = false
 
     await this.fetchContasReceber();
+    await this.fetchClients();
 
   },
   methods:{
+    async fetchClients() {
+      try {
+        const response = await axios.get('/api/clients');
+        this.clients = response.data.length;
+        console.log('Clientes recebidos:', this.clients);
+      } catch (error) {
+        console.error('Erro ao buscar clientes:', error);
+      }
+    },
     async fetchContasReceber() {
       try {
 
         const response = await axios.get('/api/contasrecebergrafico');
         const response2 = await axios.get('/api/contaspagargrafico');
              
-        console.log('Contas Pagar:', response2.data);
+        console.log('Contas Receber:', response.data);
 
-        this.contas = response.data;
-        this.contas2 = response2.data;
+        //Contas a Pagar//
+        const values = Object.values(response2.data);
+        const sum = values.reduce((acc, curr) => acc + curr, 0);
+        const dataAtual = new Date();
+        const mesAtual = dataAtual.getMonth() + 1;
+        let somaPagarMes = 0;
+        if (response2.data.hasOwnProperty(mesAtual.toString())) {
+          somaPagarMes = response2.data[mesAtual.toString()];
+        }
+
+        //Contas a Receber//
+        const values2 = Object.values(response2.data);
+        const sum2 = values2.reduce((acc, curr) => acc + curr, 0);
+        let somaReceberMes = 0;
+        if (response.data.hasOwnProperty(mesAtual.toString())) {
+          somaReceberMes = response.data[mesAtual.toString()];
+        }
+
+        this.somaPagarMes = somaPagarMes;
+        this.somaReceberMes = somaReceberMes;
+        this.contasPagar = sum;
+        this.contasReceber = sum2;
+
+        this.contas = response.data; //Receber
+        this.contas2 = response2.data; //Pagar
+
+
 
         Object.keys(this.contas).forEach(month => {
           const monthIndex = parseInt(month) - 1;

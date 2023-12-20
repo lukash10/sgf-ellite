@@ -67,10 +67,12 @@
             </div>
 
             <div class="buttons mt-5" style="padding-bottom: 10px;">
-                <b-button type="submit" variant="primary"><i class="fa-solid fa-plus"></i> Cadastrar</b-button>
-                <!-- <router-link to="/">
+               
+                <b-button type="submit" style="background-color: rgb(0 131 96);"><i class="fa-solid fa-user"></i> {{ mode === 'ADD' ?  'Cadastrar' : 'Editar' }}</b-button>
+                <router-link to="/">
                     <b-button class="mx-2" variant="danger"><i class="fa-solid fa-house"></i> Voltar</b-button>
-                </router-link> -->
+                </router-link>
+                
             </div>
 
 

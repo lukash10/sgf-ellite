@@ -26,7 +26,12 @@
 
     <tbody>
       <tr v-for="(conta, index) in contas" :key="index">
-          <th scope="row">{{ index + 1 }}</th>
+          <th scope="row">
+            <button @click="alterarStatusRecebimento(conta)" style="border: none;">
+              <i v-if="conta.statusPagamento === 'Pendente'" class="fa-brands fa-cc-visa fa-2xl" style="color:green"></i>
+              <i v-else class="fa-brands fa-cc-visa fa-2xl" style="color:red"></i>
+            </button>
+          </th>
           <td>{{ conta.clientes.nome }}</td>
           <td>{{ conta.descricao }}</td>
           <td>{{ formatarData(conta.emissaoPagamento) }}</td>
@@ -65,6 +70,19 @@ export default {
     this.fetchClients(); // Ao montar o componente, buscar os clientes
   },
   methods: {
+    async alterarStatusRecebimento(conta) {
+      if (conta.statusPagamento === 'Pendente') {
+        conta.statusPagamento = 'Pago'; // Altera para 'Recebido' se estiver 'Pendente'
+      } else if (conta.statusPagamento === 'Pago') {
+        conta.statusPagamento = 'Pendente'; // Altera para 'Pendente' se estiver 'Recebido'
+      }
+
+      // Aqui você pode fazer a lógica para atualizar no servidor via requisição axios se necessário
+      
+      const response = await axios.put(`/api/contaspagar/${conta.id}`, { statusPagamento: conta.statusPagamento });
+      console.log('Novo status:', conta.statusPagamento);
+      console.log("response", response);
+    },
     async editarContaReceber(contaRec) {
       this.$router.push(`/cadPagar?id=${contaRec}`);
     },
@@ -122,12 +140,16 @@ body{
   background: red;
   border-radius: 5px;
   color: white;
+  border-radius: 100px;
+  text-align: center;
 }
 
 .bg-success {
   background-color: rgb(7, 97, 11)(0, 255, 64) !important;
   border-radius: 5px;
   color: white;
+  border-radius: 100px;
+  text-align: center;
 }
 
 

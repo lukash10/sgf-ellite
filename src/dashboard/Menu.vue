@@ -3,8 +3,13 @@
 <aside id="sidebarMenu" class="bg-dark flex-column">
 
     <a class="text-decoration-none align-items-center text-white text-center mt-3">
-        <span class="fs-5 d-none d-sm-inline">Sistema de Gestão<br>Financeira</span>
+        <b><span class="fs-5 d-none d-sm-inline">Sistema de Gestão<br>Financeira</span></b>
     </a>
+
+    <div class="mt-2 d-flex justify-content-center">
+        <img src="/logo.png" width="120px">
+    </div>
+   
 
     <ul class="nav nav-pills flex-column mt-4">
         
@@ -99,19 +104,7 @@
 
 
 
-    </ul>
-
-    <div class="p-3" style="position: absolute; bottom: 0;">
-        <div class="dropdown open p-3 mt-auto">
-        <button class="btn border-none text-white dropdown-toggle" type="button" id="triggerId" data-aria-expanded="false">
-            <i class="fa fa-user"></i><span class="ms-2">Yousaf</span>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="triggerId">
-            <button class="dropdown-item" href="#">Setting</button>
-            <button class="dropdown-item" href="#">Profile</button>
-        </div>
-        </div>
-    </div>     
+    </ul>   
 </aside>
 
 </template>

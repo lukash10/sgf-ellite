@@ -21,16 +21,19 @@ module.exports = {
   
       contasReceber.forEach(conta => {
 
-        const dataVencimento = new Date(conta.dataVencimento);
-        const month = dataVencimento.getMonth() + 1;
-        const valorTotal = parseFloat(conta.valorTotal);
+        if (conta.statusRecebimento === 'Pendente'){
+          const dataVencimento = new Date(conta.dataVencimento);
+          const month = dataVencimento.getMonth() + 1;
+          const valorTotal = parseFloat(conta.valorTotal);
   
-        if (!valoresPorMes[month]) {
-          valoresPorMes[month] = 0;
+          if (!valoresPorMes[month]) {
+            valoresPorMes[month] = 0;
+          }
+  
+          console.log(dataVencimento,month,valorTotal);
+          valoresPorMes[month] += valorTotal;
         }
-  
-        console.log(dataVencimento,month,valorTotal);
-        valoresPorMes[month] += valorTotal;
+        
       });
   
       
